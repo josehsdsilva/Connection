@@ -60,11 +60,13 @@ public class GameManager : MonoBehaviour
             {
                 mouseEndPosition = Input.mousePosition;
                 mouseEndPosition = Camera.main.ScreenToWorldPoint(mouseEndPosition);
+                // Make a play if possible
                 TryToLinkNodes();
             }
         }
     }
 
+    // Get Level Dimensions
     Vector2 CheckDimensions()
     {
         Vector2 aux = Vector2.zero;
@@ -79,6 +81,7 @@ public class GameManager : MonoBehaviour
         return aux;
     }
 
+    // Get Level Win Value
     int GetWinValue()
     {
         int winValue = 0;
@@ -90,33 +93,36 @@ public class GameManager : MonoBehaviour
         return winValue / 2;
     }
 
-    public int Sweep()
+    // Compare if you connected more nodes
+    public int QuickSweep(int w, int h)
     {
         int value = 0;
-
-        for (int h = 0; h < puzzle.height; h++)
+        // compare top
+        if (h != puzzle.height - 1)
         {
-            for (int w = 0; w < puzzle.width; w++)
-            {
-                // compare top
-                if (h != puzzle.height - 1)
-                    if (puzzle.level[w, h].connections[0] && puzzle.level[w, h + 1].connections[2])
-                        value++;
-
-                // compare right
-                if (w != puzzle.width - 1)
-                    if (puzzle.level[w, h].connections[1] && puzzle.level[w + 1, h].connections[3])
-                        value++;
-
-            }
+            if (puzzle.level[w, h].connections[0] && puzzle.level[w, h + 1].connections[2]) value++;
         }
-
+        // compare right
+        if (w != puzzle.width - 1)
+        {
+            if (puzzle.level[w, h].connections[1] && puzzle.level[w + 1, h].connections[3]) value++;
+        }
+        // compare bot
+        if (h != 0)
+        {
+            if (puzzle.level[w, h].connections[2] && puzzle.level[w, h - 1].connections[0]) value++;
+        }
+        // compare left
+        if (w != 0)
+        {
+            if (puzzle.level[w, h].connections[3] && puzzle.level[w - 1, h].connections[1]) value++;
+        }
         return value;
     }
 
+    // Make a play if possible
     void TryToLinkNodes()
     {
-
         // floats
         float xStart = mouseStartPosition.x;
         float zStart = mouseStartPosition.z;
@@ -164,7 +170,9 @@ public class GameManager : MonoBehaviour
 
                 if (puzzle.level[startNodeX, startNodeZ].connections[startDir] && puzzle.level[endNodeX, endNodeZ].connections[endDir])
                 {
+                    // Update Start Node
                     puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, false);
+                    // Update End Node
                     puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, false);
                 }
                 else
@@ -172,11 +180,29 @@ public class GameManager : MonoBehaviour
                     if (puzzle.level[startNodeX, startNodeZ].currentConnections < puzzle.level[startNodeX, startNodeZ].MaxConnections &&
                     puzzle.level[endNodeX, endNodeZ].currentConnections < puzzle.level[endNodeX, endNodeZ].MaxConnections)
                     {
+                        // Update Start Node
+                        int difference = -QuickSweep(startNodeX, startNodeZ);
                         puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, true);
+                        difference += QuickSweep(startNodeX, startNodeZ);
+                        puzzle.currentValue += difference;
+                        // Update End Node
+                        difference = -QuickSweep(endNodeX, endNodeZ);
                         puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, true);
+                        difference += QuickSweep(endNodeX, endNodeZ);
+                        puzzle.currentValue += difference;
+
+                        if (puzzle.currentValue == puzzle.winValue)
+                        {
+                            Win();
+                        }
                     }
                 }
             }
         }
+    }
+
+    void Win()
+    {
+        Debug.Log("You Win");
     }
 }
