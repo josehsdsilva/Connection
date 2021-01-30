@@ -143,7 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxConnections: 0
   currentConnections: 0
-  connections: 00000000000000000000000000000000
+  connections: 00000000
   childs:
   - {fileID: 2495245313788792493}
   - {fileID: 3656995638506143627}

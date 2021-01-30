@@ -132,9 +132,6 @@ public class GameManager : MonoBehaviour
         int dirX = endNodeX - startNodeX;
         int dirZ = endNodeZ - startNodeZ;
 
-        Debug.Log("Start: (" + startNodeX + "," + startNodeZ + ")");
-        Debug.Log("End: (" + endNodeX + "," + endNodeZ + ")");
-
         int startDir = -1, endDir = -1;
 
         if(dirX > -2 && dirX < 2 && dirZ == 0 && startNodeX != endNodeX)
@@ -150,7 +147,7 @@ public class GameManager : MonoBehaviour
         }
         else if (dirZ > -2 && dirZ < 2 && dirX == 0 && startNodeZ != endNodeZ)
         {
-            if (dirX == 1)
+            if (dirZ == 1)
             {
                 startDir = 0; endDir = 2;
             }
@@ -160,19 +157,20 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (startDir != -1 )
+        if (startDir != -1)
         {
             if (startNodeX < puzzle.width && startNodeX >= 0 && startNodeZ < puzzle.height && startNodeZ >= 0 && endNodeX < puzzle.width && endNodeX >= 0 && endNodeZ < puzzle.height && endNodeZ >= 0)
             {
-                if (puzzle.level[startNodeX, startNodeZ].currentConnections < puzzle.level[startNodeX, startNodeZ].MaxConnections &&
-                    puzzle.level[endNodeX, endNodeZ].currentConnections < puzzle.level[endNodeX, endNodeZ].MaxConnections)
+
+                if (puzzle.level[startNodeX, startNodeZ].connections[startDir] && puzzle.level[endNodeX, endNodeZ].connections[endDir])
                 {
-                    if (puzzle.level[startNodeX, startNodeZ].connections[startDir] && puzzle.level[endNodeX, endNodeZ].connections[endDir])
-                    {
-                        puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, false);
-                        puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, false);
-                    }
-                    else
+                    puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, false);
+                    puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, false);
+                }
+                else
+                {
+                    if (puzzle.level[startNodeX, startNodeZ].currentConnections < puzzle.level[startNodeX, startNodeZ].MaxConnections &&
+                    puzzle.level[endNodeX, endNodeZ].currentConnections < puzzle.level[endNodeX, endNodeZ].MaxConnections)
                     {
                         puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, true);
                         puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, true);

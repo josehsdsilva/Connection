@@ -13,5 +13,7 @@ public class Node : MonoBehaviour
     {
         childs[dir].SetActive(active);
         connections[dir] = active;
+        if (active) currentConnections++;
+        else currentConnections--;
     }
 }
