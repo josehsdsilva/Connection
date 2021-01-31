@@ -37,4 +37,11 @@ public class Node : MonoBehaviour
         }
     }
 
+    public void SetOnLevelFinished()
+    {
+        if(MaxConnections != 0)
+        childs[4].GetComponent<MeshRenderer>().material.color = new Color(0, 255, 0);
+        textMesh.gameObject.SetActive(false);
+    }
+
 }

@@ -5,6 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    enum Gamestate
+    {
+        gameStart = 0,
+        playable,
+        levelComplete,
+        nextLevel
+    }
+
     [System.Serializable]
     public class Puzzle
     {
@@ -24,6 +32,9 @@ public class GameManager : MonoBehaviour
     public int winValue;
     public int currentValue;
 
+    Gamestate gamestate;
+    float counter;
+
     List<List<GameObject>> level = new List<List<GameObject>>();
 
     // Touch variables
@@ -37,6 +48,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gamestate = Gamestate.gameStart;
+
         if (Random)
         {
             GetLevelInfo();
@@ -84,34 +97,49 @@ public class GameManager : MonoBehaviour
 
             puzzle.winValue = GetWinValue();
         }
+
+        gamestate = Gamestate.playable;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (gamestate == Gamestate.playable)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetButtonDown("Fire1"))
             {
-                mouseStartPosition = Input.mousePosition;
-                mouseStartPosition = Camera.main.ScreenToWorldPoint(mouseStartPosition);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    mouseStartPosition = Input.mousePosition;
+                    mouseStartPosition = Camera.main.ScreenToWorldPoint(mouseStartPosition);
+                }
+            }
+            if (Input.GetButtonUp("Fire1"))
+            {
+                if (Input.GetMouseButtonUp(0))
+                {
+                    mouseEndPosition = Input.mousePosition;
+                    mouseEndPosition = Camera.main.ScreenToWorldPoint(mouseEndPosition);
+                    // Make a play if possible
+                    if (Random)
+                    {
+                        TryToLinkRandomGeneratedNodes();
+                    }
+                    else
+                    {
+                        TryToLinkNodes();
+                    }
+                }
             }
         }
-        if (Input.GetButtonUp("Fire1"))
+
+        if(gamestate == Gamestate.levelComplete)
         {
-            if (Input.GetMouseButtonUp(0))
+            counter += Time.deltaTime;
+            if(counter > 3)
             {
-                mouseEndPosition = Input.mousePosition;
-                mouseEndPosition = Camera.main.ScreenToWorldPoint(mouseEndPosition);
-                // Make a play if possible
-                if(Random)
-                {
-                    TryToLinkRandomGeneratedNodes();
-                }
-                else
-                {
-                    TryToLinkNodes();
-                }
+                counter = 0;
+                NextLevel();
             }
         }
     }
@@ -194,10 +222,14 @@ public class GameManager : MonoBehaviour
         {
             if (startNodeX < puzzle.width && startNodeX >= 0 && startNodeZ < puzzle.height && startNodeZ >= 0 && endNodeX < puzzle.width && endNodeX >= 0 && endNodeZ < puzzle.height && endNodeZ >= 0)
             {
+                // Calculate new currentValue
+                int differenceStart = -QuickSweep(startNodeX, startNodeZ);
+                int differenceEnd = -QuickSweep(endNodeX, endNodeZ);
                 if (puzzle.level[startNodeX, startNodeZ].connections[startDir] && puzzle.level[endNodeX, endNodeZ].connections[endDir])
                 {
                     // Update Start Node
                     puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, false, false);
+
                     // Update End Node
                     puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, false, false);
                 }
@@ -207,21 +239,21 @@ public class GameManager : MonoBehaviour
                     puzzle.level[endNodeX, endNodeZ].currentConnections < puzzle.level[endNodeX, endNodeZ].MaxConnections)
                     {
                         // Update Start Node
-                        int difference = -QuickSweep(startNodeX, startNodeZ);
                         puzzle.level[startNodeX, startNodeZ].ChildSetActive(startDir, true, false);
-                        difference += QuickSweep(startNodeX, startNodeZ);
-                        puzzle.currentValue += difference;
-                        // Update End Node
-                        difference = -QuickSweep(endNodeX, endNodeZ);
-                        puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, true, false);
-                        difference += QuickSweep(endNodeX, endNodeZ);
-                        puzzle.currentValue += difference;
 
-                        if (puzzle.currentValue == puzzle.winValue)
-                        {
-                            OnWin();
-                        }
+                        // Update End Node
+                        puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, true, false);
                     }
+                }
+
+                // Calculate new currentValue
+                differenceStart += QuickSweep(startNodeX, startNodeZ);
+                differenceEnd += QuickSweep(endNodeX, endNodeZ);
+                puzzle.currentValue += differenceStart + differenceEnd;
+
+                if (puzzle.currentValue == puzzle.winValue)
+                {
+                    LevelComplete();
                 }
             }
         }
@@ -307,7 +339,7 @@ public class GameManager : MonoBehaviour
 
                 if (currentValue == winValue)
                 {
-                    OnWin();
+                    LevelComplete();
                 }
             }
         }
@@ -316,28 +348,7 @@ public class GameManager : MonoBehaviour
     // Compare if you connected more nodes
     public int QuickSweep(int w, int h)
     {
-        int value = 0;
-        // compare top
-        if (h != puzzle.height - 1)
-        {
-            if (puzzle.level[w, h].connections[0] && puzzle.level[w, h + 1].connections[2]) value++;
-        }
-        // compare right
-        if (w != puzzle.width - 1)
-        {
-            if (puzzle.level[w, h].connections[1] && puzzle.level[w + 1, h].connections[3]) value++;
-        }
-        // compare bot
-        if (h != 0)
-        {
-            if (puzzle.level[w, h].connections[2] && puzzle.level[w, h - 1].connections[0]) value++;
-        }
-        // compare left
-        if (w != 0)
-        {
-            if (puzzle.level[w, h].connections[3] && puzzle.level[w - 1, h].connections[1]) value++;
-        }
-        return value;
+        return puzzle.level[w, h].currentConnections;
     }
 
     // Compare if you connected more nodes
@@ -374,12 +385,22 @@ public class GameManager : MonoBehaviour
             winValue += p.MaxConnections;
         }
 
-        return winValue / 2;
+        return winValue;
     }
 
-    // On Win
-    void OnWin()
+    void LevelComplete()
     {
+        gamestate = Gamestate.levelComplete;
+
+        foreach (var p in puzzle.level)
+        {
+            p.SetOnLevelFinished();
+        }
+    }
+
+    void NextLevel()
+    {
+        gamestate = Gamestate.nextLevel;
         SceneManager.LoadScene("SampleScene");
     }
     #endregion

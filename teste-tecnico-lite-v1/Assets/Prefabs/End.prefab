@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8645881947456544323}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!23 &2382880678455098805
 MeshRenderer:
@@ -123,7 +123,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 8645881947456544323}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5296947609896756455
 MeshFilter:
@@ -201,12 +201,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4245471696122713712}
   - {fileID: 96336734818917196}
   - {fileID: 7199184311479364184}
   - {fileID: 6107456097265521239}
   - {fileID: 8011847081179362835}
   - {fileID: 4417554667812397690}
+  - {fileID: 4245471696122713712}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -241,6 +241,7 @@ MonoBehaviour:
   - {fileID: 3656995638506143627}
   - {fileID: 3169533856671196880}
   - {fileID: 4718544664780647404}
+  - {fileID: 1385039767276881624}
   textMesh: {fileID: 5908945110454989325}
   MaxConnections: 0
   connections: 00000000
@@ -274,7 +275,7 @@ Transform:
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children: []
   m_Father: {fileID: 8645881947456544323}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6671383397794549059
 MeshFilter:
@@ -353,7 +354,7 @@ Transform:
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children: []
   m_Father: {fileID: 8645881947456544323}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &9109642109226961216
 MeshFilter:
@@ -432,7 +433,7 @@ Transform:
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children: []
   m_Father: {fileID: 8645881947456544323}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3939305774676667138
 MeshFilter:
@@ -511,7 +512,7 @@ Transform:
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children: []
   m_Father: {fileID: 8645881947456544323}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6381341847392656303
 MeshFilter:
