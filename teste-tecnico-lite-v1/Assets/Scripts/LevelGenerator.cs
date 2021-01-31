@@ -5,9 +5,12 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     public LevelData level;
-    public int width, height;
 
     public bool GenerateLevel;
+    [Range(2, 4)]
+    public int width;
+    [Range(2, 6)]
+    public int height;
 
     private void Start()
     {

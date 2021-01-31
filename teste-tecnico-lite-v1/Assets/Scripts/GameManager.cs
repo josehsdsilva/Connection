@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    #region Gamestates
     enum Gamestate
     {
         gameStart = 0,
@@ -12,6 +14,9 @@ public class GameManager : MonoBehaviour
         levelComplete,
         nextLevel
     }
+    #endregion
+
+    Gamestate gamestate;
 
     [System.Serializable]
     public class Puzzle
@@ -24,15 +29,18 @@ public class GameManager : MonoBehaviour
         public Node[,] level;
     }
 
+    // Objects to set in inspector
+    public GameObject[] NodePrefabs;
     public LevelData[] levels;
+    public Text scoreText;
 
-    public int currentLevel = 0;
-    public bool Random;
+    int currentLevel = 0;
+    int winValue;
+    int currentValue;
+    int score;
 
-    public int winValue;
-    public int currentValue;
+    bool Random;
 
-    Gamestate gamestate;
     float counter;
 
     List<List<GameObject>> level = new List<List<GameObject>>();
@@ -40,15 +48,13 @@ public class GameManager : MonoBehaviour
     // Touch variables
     private Vector3 mouseStartPosition, mouseEndPosition;
 
-    // NodePrefabs
-    public GameObject[] NodePrefabs;
-
     public Puzzle puzzle = new Puzzle();
 
     // Start is called before the first frame update
     void Start()
     {
         gamestate = Gamestate.gameStart;
+        score = 0;
 
         if (Random)
         {
@@ -232,6 +238,8 @@ public class GameManager : MonoBehaviour
 
                     // Update End Node
                     puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, false, false);
+
+                    score -= 15;
                 }
                 else
                 {
@@ -243,6 +251,8 @@ public class GameManager : MonoBehaviour
 
                         // Update End Node
                         puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, true, false);
+
+                        score += 10;
                     }
                 }
 
@@ -253,8 +263,14 @@ public class GameManager : MonoBehaviour
 
                 if (puzzle.currentValue == puzzle.winValue)
                 {
+                    if(score/10 == puzzle.winValue/2)
+                    {
+                        score *= 2;
+                    }
+
                     LevelComplete();
                 }
+                scoreText.text = "Score: " + score;
             }
         }
     }
