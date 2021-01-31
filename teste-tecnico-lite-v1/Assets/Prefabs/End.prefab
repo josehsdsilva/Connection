@@ -235,7 +235,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4525739f7302984fa0346b42c8d4186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentConnections: 0
   childs:
   - {fileID: 2495245313788792493}
   - {fileID: 3656995638506143627}
@@ -243,6 +242,8 @@ MonoBehaviour:
   - {fileID: 4718544664780647404}
   - {fileID: 1385039767276881624}
   textMesh: {fileID: 5908945110454989325}
+  win: {fileID: 2100000, guid: e9a0ce25b9e2b74419830a7916c995f2, type: 2}
+  currentConnections: 0
   MaxConnections: 0
   connections: 00000000
 --- !u!1 &2495245313788792493

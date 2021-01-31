@@ -33,8 +33,12 @@ public class GameManager : MonoBehaviour
     public GameObject[] NodePrefabs;
     public LevelData[] levels;
     public Text scoreText;
+    public GameObject[] premadeLevels;
 
-    int currentLevel = 0;
+    public bool resetPlayerPrefs;
+    public int levelCount;
+
+    int currentLevel = 1;
     int winValue;
     int currentValue;
     int score;
@@ -55,6 +59,9 @@ public class GameManager : MonoBehaviour
     {
         gamestate = Gamestate.gameStart;
         score = 0;
+
+        if (resetPlayerPrefs) ResetCompletedLevels(levelCount);
+        SetLevel(GetNextIncompletedLevel(levelCount));
 
         if (Random)
         {
@@ -391,6 +398,54 @@ public class GameManager : MonoBehaviour
         return aux;
     }
 
+    #region Level Management
+    void SetLevel(int _level)
+    {
+        currentLevel = _level;
+        if (currentLevel == 1)
+        {
+            premadeLevels[0].SetActive(true);
+            premadeLevels[1].SetActive(false);
+        }
+        else if (currentLevel == 2)
+        {
+            premadeLevels[0].SetActive(false);
+            premadeLevels[1].SetActive(true);
+        }
+    }
+
+    void SetLevelCompleted(int level, int completed)
+    {
+        string aux = "level" + level;
+        PlayerPrefs.SetInt(aux, completed);
+    }
+
+    bool IsLevelCompleted(int level)
+    {
+        string aux = "level" + level;
+        return PlayerPrefs.GetInt(aux) == 1;
+    }
+
+    void ResetCompletedLevels(int max)
+    {
+        for (int i = 1; i <= max; i++)
+        {
+            string aux = "level" + i;
+            PlayerPrefs.SetInt(aux, 0);
+        }
+    }
+
+    int GetNextIncompletedLevel(int max)
+    {
+        for (int i = 1; i <= max; i++)
+        {
+            if(!IsLevelCompleted(i)) return i;
+        }
+        ResetCompletedLevels(levelCount);
+        return 1;
+    }
+    #endregion
+
     #region Win
     // Get Level Win Value
     int GetWinValue()
@@ -412,11 +467,14 @@ public class GameManager : MonoBehaviour
         {
             p.SetOnLevelFinished();
         }
+
+        SetLevelCompleted(currentLevel, 1);
     }
 
     void NextLevel()
     {
         gamestate = Gamestate.nextLevel;
+        SetLevel(GetNextIncompletedLevel(levelCount));
         SceneManager.LoadScene("SampleScene");
     }
     #endregion

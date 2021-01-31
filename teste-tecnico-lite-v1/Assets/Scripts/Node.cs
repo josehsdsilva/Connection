@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    public int currentConnections;
+    // Set on Inspector
     public GameObject[] childs;
     public TextMesh textMesh;
+    public Material win;
+
+    public int currentConnections;
     public NodeData nodeData = new NodeData();
     public int MaxConnections;
     public bool[] connections;
@@ -40,7 +43,7 @@ public class Node : MonoBehaviour
     public void SetOnLevelFinished()
     {
         if(MaxConnections != 0)
-        childs[4].GetComponent<MeshRenderer>().material.color = new Color(0, 255, 0);
+        childs[4].GetComponent<MeshRenderer>().material = win;
         textMesh.gameObject.SetActive(false);
     }
 
