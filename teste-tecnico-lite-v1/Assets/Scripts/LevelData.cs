@@ -2,17 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Level", menuName = "Level"),]
 public class LevelData : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public int width = 0, height = 0;
+    public List<NodeData> data = new List<NodeData>();
 }

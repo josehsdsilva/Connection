@@ -4,16 +4,37 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    public int MaxConnections;
     public int currentConnections;
-    public bool[] connections;
     public GameObject[] childs;
+    public TextMesh textMesh;
+    public NodeData nodeData = new NodeData();
+    public int MaxConnections;
+    public bool[] connections;
+    bool random = false;
 
-    public void ChildSetActive(int dir, bool active)
+    public void ChildSetActive(int dir, bool active, bool _random)
     {
+        random = _random;
         childs[dir].SetActive(active);
-        connections[dir] = active;
+        if (!random) connections[dir] = active;
+        else nodeData.connections[dir] = active;
         if (active) currentConnections++;
         else currentConnections--;
+        UpdateTextMesh();
     }
+
+    public void UpdateTextMesh()
+    {
+        if(!random)
+        {
+            if (MaxConnections == 0) textMesh.gameObject.SetActive(false);
+            textMesh.text = (MaxConnections - currentConnections).ToString();
+        }
+        else
+        {
+            if (nodeData.MaxConnections == 0) textMesh.gameObject.SetActive(false);
+            textMesh.text = (nodeData.MaxConnections - currentConnections).ToString();
+        }
+    }
+
 }
