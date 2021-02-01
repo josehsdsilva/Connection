@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public LevelData[] levels;
     public Text scoreText;
     public GameObject[] premadeLevels;
+    public AudioManager audioManager;
 
     public bool resetPlayerPrefs;
     public int levelCount;
@@ -56,7 +57,9 @@ public class GameManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
+    { 
+        audioManager.PlayOnLoop("Background");
+
         gamestate = Gamestate.gameStart;
         score = 0;
 
@@ -247,6 +250,7 @@ public class GameManager : MonoBehaviour
                     puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, false, false);
 
                     score -= 15;
+                    audioManager.Play("Lose");
                 }
                 else
                 {
@@ -260,6 +264,7 @@ public class GameManager : MonoBehaviour
                         puzzle.level[endNodeX, endNodeZ].ChildSetActive(endDir, true, false);
 
                         score += 10;
+                        audioManager.Play("Win");
                     }
                 }
 
@@ -274,6 +279,8 @@ public class GameManager : MonoBehaviour
                     {
                         score *= 2;
                     }
+                    audioManager.Stop("Win");
+                    audioManager.Play("Completed");
 
                     LevelComplete();
                 }
