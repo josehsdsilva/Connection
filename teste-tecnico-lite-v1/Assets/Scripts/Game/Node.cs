@@ -10,17 +10,13 @@ public class Node : MonoBehaviour
     public Material win;
 
     public int currentConnections;
-    public NodeData nodeData = new NodeData();
     public int MaxConnections;
     public bool[] connections;
-    bool random = false;
 
-    public void ChildSetActive(int dir, bool active, bool _random)
+    public void ChildSetActive(int dir, bool active)
     {
-        random = _random;
         childs[dir].SetActive(active);
-        if (!random) connections[dir] = active;
-        else nodeData.connections[dir] = active;
+        connections[dir] = active;
         if (active) currentConnections++;
         else currentConnections--;
         UpdateTextMesh();
@@ -28,16 +24,8 @@ public class Node : MonoBehaviour
 
     public void UpdateTextMesh()
     {
-        if(!random)
-        {
-            if (MaxConnections == 0) textMesh.gameObject.SetActive(false);
-            textMesh.text = (MaxConnections - currentConnections).ToString();
-        }
-        else
-        {
-            if (nodeData.MaxConnections == 0) textMesh.gameObject.SetActive(false);
-            textMesh.text = (nodeData.MaxConnections - currentConnections).ToString();
-        }
+        if (MaxConnections == 0) textMesh.gameObject.SetActive(false);
+        textMesh.text = (MaxConnections - currentConnections).ToString();
     }
 
     public void SetOnLevelFinished()
