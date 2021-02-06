@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     int currentValue;
     int currentLevel = 0;
     int score;
-    int levelCount;
+    int levelsCount;
 
     LevelData[] levels;
     // ### Auxiliar variables
@@ -43,7 +43,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         levels = Resources.LoadAll<LevelData>("Levels");
-        levelCount = levels.Length;
+        levelsCount = levels.Length;
+
+        OrderLevels();
+
         audioManager.PlayOnLoop("Background");
 
         gamestate = Gamestate.gameStart;
@@ -93,7 +96,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #region Instantiate from level data
+    #region Get level data
+    void OrderLevels()
+    {
+        LevelData[] aux = new LevelData[levelsCount];
+        for (int i = 1; i <= levelsCount; i++)
+        {
+            for (int j = 0; j < levelsCount; j++)
+            {
+                if (levels[j].name == i.ToString())
+                {
+                    aux[i-1] = levels[j];
+                }
+            }
+        }
+        levels = aux;
+    }
+
     // Retrieve level data from ScriptableObject and Instantiate level objects
     void GetLevelInfo()
     {
@@ -248,7 +267,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetCompletedLevels()
     {
-        for (int i = 1; i <= levelCount; i++)
+        for (int i = 1; i <= levelsCount; i++)
         {
             string aux = "level" + i;
             PlayerPrefs.SetInt(aux, 0);

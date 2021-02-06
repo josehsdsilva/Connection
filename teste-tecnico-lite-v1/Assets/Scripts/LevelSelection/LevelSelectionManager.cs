@@ -18,5 +18,10 @@ public class LevelSelectionManager : MonoBehaviour
             go.GetComponent<ButtonController>().level = i + 1;
         }
     }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }
 
